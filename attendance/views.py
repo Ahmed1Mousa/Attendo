@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import Student, Attendance
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import AttendanceForm
+from datetime import date
 
 
 def student_list(request):
@@ -36,18 +37,32 @@ def mark_attendance(request):
         # Get the list of selected student IDs
         students = Student.objects.all()
         attendance_date = request.POST.get("attendance_date")
+        if not attendance_date:
+            attendance_date = date.today()
 
-        # Save attendance records to the database for each selected student
+        # Save or update attendance records for each selected student
         for student in students:
-            present = request.POST.get(f"present_{student.id}", False)
+            present = request.POST.get(f"present_{student.id}")
+
+            # Check if an attendance record already exists for the student on the given date
+            existing_record = Attendance.objects.filter(
+                student_id=student.id, date=attendance_date
+            ).first()
+
             if present == "on":
                 present = False
             else:
                 present = True
-            attendance = Attendance(
-                student_id=student.id, date=attendance_date, present=present
-            )
-            attendance.save()
+
+            # If an attendance record exists, update it; otherwise, create a new one
+            if existing_record:
+                existing_record.present = present
+                existing_record.save()
+            else:
+                attendance = Attendance(
+                    student_id=student.id, date=attendance_date, present=present
+                )
+                attendance.save()
 
     # Redirect to a suitable page after marking attendance
     return redirect("student_list")
@@ -98,10 +113,6 @@ def edit_attendance(request, date_filter):
         "attendance/edit_attendance.html",
         {"students": students, "date_filter": date_filter},
     )
-
-
-def upload_image(request):
-    return render(request, "attendance/upload_image.html")
 
 
 def add_attendance(request):

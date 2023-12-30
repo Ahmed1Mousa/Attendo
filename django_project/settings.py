@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "attendance",
+    "face_recognition_app",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
@@ -151,6 +152,9 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # django-crispy-forms
 # https://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs

@@ -5,7 +5,6 @@ from attendance.views import (
     reset_attendance,
     add_attendance,
     edit_attendance,
-    upload_image,
 )
 
 urlpatterns = [
@@ -20,5 +19,4 @@ urlpatterns = [
         name="edit_attendance",
     ),
     path("add_attendance/", add_attendance, name="add_attendance"),
-    path("upload/", upload_image, name="upload_image"),
 ]

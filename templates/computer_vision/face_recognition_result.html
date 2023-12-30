@@ -1,0 +1,56 @@
+{% extends '_base.html' %}
+{% block title %}Face Recognition Result{% endblock title %}
+
+{% block content %}
+  <h1>Face Recognition Result</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Original Image</h2>
+      <img src="/{{ original_image_path }}" class="img-fluid" alt="Original Image">
+    </div>
+    <div class="col-md-6">
+      <h2>Recognized Faces</h2>
+      <img src="/{{ output_image_path }}" class="img-fluid" alt="Recognized Faces">
+
+      <h3>Recognition Results</h3>
+      <ul>
+        {% for id, name in output.items %}
+          <li>ID: {{ id }}, Name: {{ name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  <!-- Display Table for Students with Same ID -->
+  <form method="post" action="{% url 'mark_attendance' %}">
+  {% csrf_token %}
+  <input type="hidden" name="attendance_date" value="{{ attendance_date }}">
+  
+  <table class="table mt-3">
+    <thead>
+      <tr>
+        <th>UniId</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Absent</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in all_students %}
+        <tr>
+          <td>{{ student.uniId }}</td>
+          <td>{{ student.name }}</td>
+          <td>{{ student.email }}</td>
+          <td>
+            <label>
+              <input type="checkbox" {% if not student.uniId in students_ids %}checked{% endif %} name="present_{{student.id}}">
+            </label>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+    <input type="submit" value="Save Absence" class="btn btn-primary">
+</form>
+
+  </div>
+{% endblock content %}

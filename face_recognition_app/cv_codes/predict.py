@@ -1,18 +1,20 @@
+# face_recognition_app/predict.py
 import cv2
 import numpy as np
 import face_recognition
 import pickle
 from datetime import datetime
-import tkinter as tk
-from tkinter import filedialog
+import os
 
 
 def markAttendance(name, id, dtString):
     name_id_dt = f"{name},{id},{dtString}"
     existing_entries = set()
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(script_dir, "Attendance.csv")
 
     # Read existing entries and add them to a set
-    with open("Attendance.csv", "r") as f:
+    with open(csv_path, "r") as f:
         for line in f:
             entry = line.strip()
             existing_entries.add(entry)
@@ -24,27 +26,18 @@ def markAttendance(name, id, dtString):
             f.write(f"\n{name_id_dt}")
 
 
-def select_image():
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askopenfilename(
-        title="Select an Image", filetypes=[("Image files", "*.jpg *.jpeg *.png")]
-    )
-    root.destroy()
-    return file_path
+def recognize_faces(image_path):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    encodings_path = os.path.join(script_dir, "encodings.pkl")
 
-
-# Load known face encodings and IDs
-with open("encodings.pkl", "rb") as f:
-    data = pickle.load(f)
-encodeListKnown = data["encodings"]
-classNames = data["names"]
-classIDs = data["ids"]
-
-image_file_path = select_image()
-
-if image_file_path:
-    img = cv2.imread(image_file_path)
+    # Load known face encodings and IDs
+    with open(encodings_path, "rb") as f:
+        data = pickle.load(f)
+    encodeListKnown = data["encodings"]
+    classNames = data["names"]
+    classIDs = data["ids"]
+    output = {}
+    img = cv2.imread(image_path)
 
     if img is not None:
         imgS = cv2.resize(img, (0, 0), None, 1, 1)
@@ -71,15 +64,18 @@ if image_file_path:
                     (255, 255, 255),
                     2,
                 )
-
+                output[id] = name
                 now = datetime.now()
                 dtString = now.strftime("%H:%M:%S:%Y-%m-%d")
                 markAttendance(name, id, dtString)
 
-        cv2.imshow("Loaded Image", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # Save the image with recognized faces to the same folder
+        output_image_name = f"recognized_faces_{os.path.basename(image_path)}"
+        output_image_path = os.path.join(os.path.dirname(image_path), output_image_name)
+        cv2.imwrite(output_image_path, img)
+
+        return output, output_image_path  # Return the path to the saved image
+
     else:
         print("Error: Unable to read the loaded image.")
-else:
-    print("No image file selected.")
+        return None

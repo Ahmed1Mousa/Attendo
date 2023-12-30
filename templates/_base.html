@@ -31,7 +31,7 @@
         </a>
 
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li><a href=" {% url "upload_image" %}" class="nav-link px-2 link-secondary">Upload Attendance</a></li>
+          <li><a href="{% url 'face_recognition_app:upload_image' %}" class="nav-link px-2 link-secondary">Upload Attendance</a></li>
           <li><a href=" {% url "student_list" %} " class="nav-link px-2 link-dark">Search</a></li>
           <li><a href="{% url 'add_attendance' %}" class="nav-link px-2 btn link-danger">Add Attendance</a></li>
         </ul>
