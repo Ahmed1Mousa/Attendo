@@ -1,0 +1,16 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Marking Attendance{% endblock %}
+
+{% block content %}
+    <h1>Mark Attendance</h1>
+    <form method="post" action="{% url 'mark_attendance' %}">
+        {% csrf_token %}
+        <input type="hidden" name="student_id" value="{{ student.id }}">
+        <input type="hidden" name="attendance_date" value="{{ some_dynamic_value }}">
+        <label for="present">Present:</label>
+        <input type="checkbox" name="present">
+        <button type="submit">Submit Attendance</button>
+    </form>
+{% endblock content %}

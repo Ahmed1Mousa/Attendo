@@ -1,0 +1,43 @@
+<!-- attendance_system/templates/add_absence.html -->
+{% extends '_base.html' %}
+
+{% block title %}Add Attendance{% endblock title %}
+
+{% block content %}
+  <h1>Add Attendance</h1>
+
+  <form method="POST" action="{% url 'mark_attendance' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="attendance_date" class="form-label">Select Date:</label>
+      <input type="date" class="form-control" id="attendance_date" name="attendance_date" required>
+    </div>
+
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>UniId</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Absent</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.uniId }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>
+              <label>
+                <input type="checkbox" name="present_{{student.id}}">
+              </label>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-danger">Mark Attendance</button>
+  </form>
+{% endblock content %}

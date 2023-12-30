@@ -1,0 +1,53 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Student List{% endblock title %}
+
+{% block content %}
+  <h1>Student List</h1>
+
+  <!-- Search by Date Form -->
+  <form method="GET" action="{% url 'student_list' %}">
+    <div class="mb-3">
+      <label for="date_filter" class="form-label">Search by Date:</label>
+      <input type="date" class="form-control" id="date_filter" name="date_filter" value="{{ date_filter }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
+  <!-- Check if there are attendance records for the selected date -->
+  {% if date_filter %}
+    {% with students|length as student_count %}
+      {% if student_count > 0 %}
+        <!-- Show the student table, Edit, and Reset buttons -->
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th>UniId</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+              <tr>
+                <td>{{ student.uniId }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td>
+                    {% if student.attended %}Present{% else %}Absent{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a href="{% url 'reset_attendance' date_filter=date_filter %}" class="btn btn-warning">Reset Attendance</a>
+        <a href="{% url 'edit_attendance' date_filter=date_filter %}" class="btn btn-info">Edit Attendance</a>
+      {% else %}
+        <!-- Display a message if no attendance records are found for the selected date -->
+        <p>No attendance records found for the selected date.</p>
+      {% endif %}
+    {% endwith %}
+  {% endif %}
+{% endblock content %}

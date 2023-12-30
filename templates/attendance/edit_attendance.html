@@ -1,0 +1,39 @@
+<!-- attendance_system/templates/add_absence.html -->
+{% extends '_base.html' %}
+
+{% block title %}Edit Attendance{% endblock title %}
+
+{% block content %}
+  <h1>Edit Attendance</h1>
+
+  <form method="POST" action="{% url 'edit_attendance' date_filter=date_filter %}">
+    {% csrf_token %}
+
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>UniId</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Absent</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.uniId }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>
+              <label>
+                <input type="checkbox" {% if not student.attended %} checked {% endif%} name="present_{{student.id}}">
+              </label>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-danger">Mark Attendance</button>
+  </form>
+{% endblock content %}
