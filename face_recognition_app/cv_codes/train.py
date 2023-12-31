@@ -13,11 +13,13 @@ def extract_frames(video_path, output_folder, frame_rate=5):
     frame_interval = int(fps / frame_rate)
 
     count = 0
+    img_num = 1
     success, frame = video_capture.read()
     while success:
-        if count % frame_interval == 0:
-            frame_file = os.path.join(output_folder, f"frame{count}.jpg")
+        if count % 10 == 0 and img_num<6:
+            frame_file = os.path.join(output_folder, f"frame{img_num}.jpg")
             cv2.imwrite(frame_file, frame)
+            img_num += 1
         success, frame = video_capture.read()
         count += 1
 
@@ -34,6 +36,7 @@ def load_images_from_folder(folder):
             person_images = []
             for file in os.listdir(person_path):
                 file_path = os.path.join(person_path, file)
+                print("Processing file:", file_path)  # Add this line for debugging
                 if file.endswith(('.jpg', '.jpeg', '.png')):
                     img = cv2.imread(file_path)
                     if img is not None:
@@ -43,11 +46,12 @@ def load_images_from_folder(folder):
 
             if person_images:
                 images.append(person_images)
-                name, id = person_folder.rsplit('_', 1)  # Split name and ID
+                name, id = person_folder.rsplit('_', 1)  
                 classNames.append(name)
                 classIDs.append(id)
 
     return images, classNames, classIDs
+
 
 def findEncodings(images):
     encodeList = []
