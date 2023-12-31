@@ -7,23 +7,23 @@ from datetime import datetime
 import os
 
 
-def markAttendance(name, id, dtString):
-    name_id_dt = f"{name},{id},{dtString}"
-    existing_entries = set()
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(script_dir, "Attendance.csv")
+# def markAttendance(name, id, dtString):
+#     name_id_dt = f"{name},{id},{dtString}"
+#     existing_entries = set()
+#     script_dir = os.path.dirname(os.path.abspath(__file__))
+#     csv_path = os.path.join(script_dir, "Attendance.csv")
 
-    # Read existing entries and add them to a set
-    with open(csv_path, "r") as f:
-        for line in f:
-            entry = line.strip()
-            existing_entries.add(entry)
+#     # Read existing entries and add them to a set
+#     with open(csv_path, "r") as f:
+#         for line in f:
+#             entry = line.strip()
+#             existing_entries.add(entry)
 
-    # Check for duplicates
-    if name_id_dt not in existing_entries:
-        # If not a duplicate, write the new entry
-        with open("Attendance.csv", "a") as f:
-            f.write(f"\n{name_id_dt}")
+#     # Check for duplicates
+#     if name_id_dt not in existing_entries:
+#         # If not a duplicate, write the new entry
+#         with open("Attendance.csv", "a") as f:
+#             f.write(f"\n{name_id_dt}")
 
 
 def recognize_faces(image_path):
@@ -67,7 +67,7 @@ def recognize_faces(image_path):
                 output[id] = name
                 now = datetime.now()
                 dtString = now.strftime("%H:%M:%S:%Y-%m-%d")
-                markAttendance(name, id, dtString)
+                # markAttendance(name, id, dtString)
 
         # Save the image with recognized faces to the same folder
         output_image_name = f"recognized_faces_{os.path.basename(image_path)}"
