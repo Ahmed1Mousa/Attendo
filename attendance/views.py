@@ -160,7 +160,7 @@ def export_attendance(request):
                     student=student, date=current_day
                 ).first()
                 if attendance:
-                    row_data.append("Absent" if attendance.present else "Present")
+                    row_data.append("Present" if attendance.present else "Absent")
                 else:
                     row_data.append("Absent")
                 current_day += timedelta(days=1)
