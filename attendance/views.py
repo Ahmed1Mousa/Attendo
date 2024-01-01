@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from .models import Student, Attendance
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AttendanceForm
-from datetime import date
+from .forms import AttendanceForm, ExportAttendanceForm
+from datetime import date, datetime, timedelta
+import csv
+from calendar import monthrange
+from io import StringIO
+from django.http import HttpResponse
 
 
 def student_list(request):
@@ -118,3 +122,59 @@ def edit_attendance(request, date_filter):
 def add_attendance(request):
     students = Student.objects.all()
     return render(request, "attendance/add_attendance.html", {"students": students})
+
+
+def export_attendance(request):
+    if request.method == "POST":
+        month = request.POST.get("month")
+        year = request.POST.get("year")
+
+        # Get the first and last day of the selected month
+        first_day = datetime(int(year), int(month), 1)
+        last_day = datetime(int(year), int(month), monthrange(int(year), int(month))[1])
+
+        # Get all students and attendance records for the selected month
+        students = Student.objects.all()
+        attendance_records = Attendance.objects.filter(
+            date__range=[first_day, last_day]
+        )
+
+        # Create a CSV file in memory
+        csv_file = StringIO()
+        csv_writer = csv.writer(csv_file)
+
+        # Write the header row with UniID, name, and email
+        header_row = ["UniID", "Name", "Email"]
+        current_day = first_day
+        while current_day <= last_day:
+            header_row.append(current_day.strftime("%Y-%m-%d"))
+            current_day += timedelta(days=1)
+        csv_writer.writerow(header_row)
+
+        # Write attendance data for each student
+        for student in students:
+            row_data = [student.uniId, student.name, student.email]
+            current_day = first_day
+            while current_day <= last_day:
+                attendance = attendance_records.filter(
+                    student=student, date=current_day
+                ).first()
+                if attendance:
+                    row_data.append("Absent" if attendance.present else "Present")
+                else:
+                    row_data.append("Absent")
+                current_day += timedelta(days=1)
+            csv_writer.writerow(row_data)
+
+        # Create the HTTP response with CSV file
+        response = HttpResponse(content_type="text/csv")
+        response[
+            "Content-Disposition"
+        ] = f'attachment; filename="attendance_{month}_{year}.csv"'
+        response.write(csv_file.getvalue())
+        return response
+    else:
+        form = ExportAttendanceForm()
+        return render(
+            request, "attendance/export_attendance.html", {"export_form": form}
+        )

@@ -1,0 +1,15 @@
+<!-- export_attendance.html -->
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Export Attendance{% endblock title %}
+
+{% block content %}
+  <h1>Export Attendance</h1>
+
+  <form method="post" action="{% url 'export_attendance' %}">
+    {% csrf_token %}
+    {{ export_form|crispy }}
+    <button type="submit" class="btn btn-primary">Export Attendance as CSV</button>
+  </form>
+
+{% endblock content %}

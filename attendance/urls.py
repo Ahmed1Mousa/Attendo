@@ -5,6 +5,7 @@ from attendance.views import (
     reset_attendance,
     add_attendance,
     edit_attendance,
+    export_attendance,
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
         name="edit_attendance",
     ),
     path("add_attendance/", add_attendance, name="add_attendance"),
+    path("export_attendance/", export_attendance, name="export_attendance"),
 ]
