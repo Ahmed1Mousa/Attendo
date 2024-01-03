@@ -60,12 +60,11 @@ def recognize_faces(image_path):
             if matches[matchIndex]:
                 name = classNames[matchIndex]
                 id = classIDs[matchIndex]
-                print("Recognized:", name, "ID:", id)
                 y1, x1, y2, x2 = faceLoc
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.putText(
                     img,
-                    f"{name} {id}",
+                    f"{name}",
                     (x1 + 6, y2 - 6),
                     cv2.FONT_HERSHEY_COMPLEX,
                     1,
