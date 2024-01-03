@@ -3,9 +3,6 @@ import numpy as np
 import face_recognition
 import pickle
 from datetime import datetime
-import tkinter as tk
-from tkinter import filedialog
-
 # def markAttendance(name, id, dtString):
 #     name_id_dt = f"{name},{id},{dtString}"
 #     existing_entries = set()
